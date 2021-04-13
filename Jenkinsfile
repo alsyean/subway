@@ -17,12 +17,6 @@ def notifyFailed(stage){
 pipeline{
     agent any
 
-    triggers {
-        pollSCM('*/3 * * * *')
-    }
-
-
-
     /* triggers {
         pollSCM('*//* 3 * * * *')
     } */
@@ -39,61 +33,6 @@ pipeline{
         }
 
 
-        stage('JAVA Build'){
-            steps {
-                echo 'JAVA Build'
-                dir ('./execute'){
-                    sh 'sh ./build.sh'
-                }
-            }
-            post {
-                success {
-                    echo 'SUCCESSFUL JAVA Build'
-                    notifySuccessful('JAVA Build')
-                }
-                failure {
-                    echo 'Fail JAVA Build'
-                    notifyFailed('JAVA BUILD Fail')
-                }
-            }
-        }
-
-
-        stage ('S3 Upload'){
-            steps {
-                dir('./execute'){
-                    sh 'sh ./s3upload.sh'
-                }
-            }
-            post {
-                success {
-                    echo 'SUCCESSFULLY S3 Upload'
-                    notifySuccessful('S3 Upload Success')
-                }
-                failure {
-                    echo 'Fail S3 upload'
-                    notifyFailed('s3 upload fail')
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps{
-                dir('./execute/codeDeploy') {
-                    sh 'sh ./deploy.sh'
-                }
-            }
-            post {
-                success {
-                    echo 'Successfully Deploy'
-                    notifySuccessful('Deploy')
-                }
-                failure {
-                    echo 'Fail Deploy'
-                    notifyFailed('Deploy')
-                }
-            }
-        }
 
         stage('End'){
             steps{
